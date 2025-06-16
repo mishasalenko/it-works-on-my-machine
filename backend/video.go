@@ -115,6 +115,7 @@ func videosGetHandler(ctx *gin.Context) {
 			httpErrorInternalServerError(err, ctx)
 			return
 		}
+		slog.Info("Fetched videos from DB", "count", len(videos), "data", videos)
 	}
 	videoJSON, err := json.Marshal(videos)
 	if err != nil {

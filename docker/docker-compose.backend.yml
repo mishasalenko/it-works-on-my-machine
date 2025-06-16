@@ -1,0 +1,39 @@
+services:
+  backend:
+    build:
+      context: ../backend
+      dockerfile: ../docker/backend/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      DB_ENDPOINT: postgres
+      DB_PORT: 5432
+      DB_USER: root
+      DB_PASS: root
+      DB_NAME: db
+      REDIS_ENDPOINT: redis
+      REDIS_PORT: 6379
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: db
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ../backend/db_schema.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  redis:
+    image: redis:8
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:
